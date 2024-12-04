@@ -3,19 +3,74 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F0EFEB; /* Off-white */
+  --foreground: #3D3D3D; /* Main text color */
+  --light-gray: #D4D4D4;
+  --light-gray-green: #B7B7A4;
+  --dark-green: #283618;
+  --nav-text: #F1F1F1; /* Navbar text color */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #F0EFEB;
+    --foreground: #3D3D3D;
+    --nav-text: #D4D4D4;
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Albert Sans", Arial, Helvetica, sans-serif;
+}
+
+/* Typography Styles */
+.caption {
+  font-family: "Albert Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 300; /* Light */
+  color: var(--foreground);
+}
+
+.body {
+  font-family: "Albert Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 300; /* Light */
+  color: var(--foreground);
+}
+
+.navbar {
+  font-family: "Albert Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 300; /* Light */
+  color: var(--nav-text);
+}
+
+.heading-4 {
+  font-family: "Albert Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 500; /* Medium */
+  color: var(--foreground);
+}
+
+.heading-3 {
+  font-family: "Albert Sans", sans-serif;
+  font-size: 21px;
+  font-weight: 500; /* Medium */
+  color: var(--foreground);
+}
+
+.heading-2 {
+  font-family: "Albert Sans", sans-serif;
+  font-size: 34px;
+  font-weight: 500; /* Medium */
+  color: var(--foreground);
+}
+
+.heading-1 {
+  font-family: "Albert Sans", sans-serif;
+  font-size: 56px;
+  font-weight: 500; /* Medium */
+  color: var(--foreground);
 }
