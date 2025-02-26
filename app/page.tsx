@@ -1,13 +1,12 @@
 import Navbar from "./components/navbar";
+import Dashboard from "./pages/dashboard";
+import Home from "./pages/home";
 
 const HomePage = () => {
   return (
     <div>
-      <Navbar />
-      <main className="p-8">
-        {/* Rest of your page content */}
-        <h1 className="text-3xl font-bold">Welcome to the Homepage!</h1>
-      </main>
+      <Navbar/>
+      <Dashboard/>
     </div>
   );
 };
