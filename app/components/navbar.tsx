@@ -35,7 +35,7 @@ const Navbar = () => {
 
         {/* Call-to-Action Button */}
         <button className="px-4 py-2 border border-gray-300 rounded-full text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
-          Find your next one in a million
+          Find your next placement
         </button>
       </div>
     </nav>
