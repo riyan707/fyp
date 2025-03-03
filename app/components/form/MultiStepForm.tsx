@@ -3,6 +3,11 @@ import React, { useState } from "react";
 import { Stepper } from "../ui/progress"; // adjust import path if needed
 import Step1 from "./step1";
 import { Button } from "@/components/ui/button";
+import Step2 from "./step2";
+import Step3 from "./step3";
+import Step4 from "./step4";
+import Step5 from "./step5";
+import Step6 from "./step6";
 
 
 export default function MultiStepForm() {
@@ -39,16 +44,16 @@ export default function MultiStepForm() {
       <div className="flex flex-col justify-center items-center mt-[40px]">
         {/* Render form content based on current step */}
         <div className="mt-4">
-          {currentStep === 1 && <div> <Step1/></div>}
-          {currentStep === 2 && <div>Form content for step 2 (Experience)</div>}
-          {currentStep === 3 && <div>Form content for step 3 (Preferences)</div>}
-          {currentStep === 4 && <div>Form content for step 3 (Preferences)</div>}
-          {currentStep === 5 && <div>Form content for step 3 (Preferences)</div>}
-          {currentStep === 6 && <div>Form content for step 3 (Preferences)</div>}
+          {currentStep === 1 && <div> <Step1/> </div>}
+          {currentStep === 2 && <div> <Step2/> </div>}
+          {currentStep === 3 && <div> <Step3/> </div>}
+          {currentStep === 4 && <div> <Step4/> </div>}
+          {currentStep === 5 && <div> <Step5/> </div>}
+          {currentStep === 6 && <div> <Step6/> </div>}
         </div>
 
         {/* Example buttons to navigate steps */}
-        <div className="max-w-[500px] mt-[20px] flex gap-4">
+        <div className="w-[500px] mt-[20px] flex gap-4">
 
           {/* Submit Button */}
           <Button
@@ -57,7 +62,7 @@ export default function MultiStepForm() {
             variant="default"
             className="w-full"
           >
-            Submit
+            Back
           </Button>
 
           {/* Submit Button */}
@@ -67,7 +72,7 @@ export default function MultiStepForm() {
             variant="default"
             className="w-full"
           >
-            Submit
+            Next
           </Button>
 
         </div>

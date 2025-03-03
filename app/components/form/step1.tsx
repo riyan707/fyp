@@ -1,19 +1,14 @@
 "use client";
 import React from "react";
 
-/**
- * Adjust these import paths to wherever your
- * shadcn/ui components live in your project.
- */
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import {Select,SelectTrigger,SelectValue,SelectContent,SelectItem,} from "@/components/ui/select";
 
 export default function Step1() {
   return (
-    <div className="max-w-[500px] mx-auto p-4">
-      <h2 className="text-2xl font-semibold mb-6">Basic Information</h2>
+    <div className="w-[500px] mx-auto ">
+      <h2 className="text-2xl font-semibold mb-6 text-center">Basic Information</h2>
 
       <form>
         {/* Full Name */}
