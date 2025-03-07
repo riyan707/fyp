@@ -54,8 +54,6 @@ export default function MultiStepForm() {
 
         {/* Example buttons to navigate steps */}
         <div className="w-[500px] mt-[20px] flex gap-4">
-
-          {/* Submit Button */}
           <Button
             onClick={goPrevious}
             type="submit"
@@ -64,17 +62,16 @@ export default function MultiStepForm() {
           >
             Back
           </Button>
-
-          {/* Submit Button */}
-          <Button
-            onClick={goNext}
-            type="submit"
-            variant="default"
-            className="w-full"
-          >
-            Next
-          </Button>
-
+          {currentStep !== steps.length && (
+            <Button
+              onClick={goNext}
+              type="submit"
+              variant="default"
+              className="w-full"
+            >
+              Next
+            </Button>
+          )}
         </div>
       </div>
 
