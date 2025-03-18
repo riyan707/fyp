@@ -1,3 +1,5 @@
 node_modules
 # Keep environment variables out of version control
 .env
+backups/db_backup_*.sql
+\!backups/db_backup_latest.sql
