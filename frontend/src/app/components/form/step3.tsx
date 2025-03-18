@@ -1,29 +1,59 @@
 "use client";
-import React from "react";
-
+import React, { useState } from "react";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/src/components/ui/select";
+import { Button } from "@/src/components/ui/button";
+import axios from "axios";
 
-import {Select,SelectTrigger,SelectValue,SelectContent,SelectItem,} from "@/src/components/ui/select";
+export default function Step3({ onNext, userId }: { onNext: (data: any) => void; userId: string }) {
+  const [internshipType, setInternshipType] = useState<string | null>(null);
+  const [committedHours, setCommittedHours] = useState<string | null>(null);
+  const [preferredIndustries, setPreferredIndustries] = useState<string>("");
+  const [interestedRoles, setInterestedRoles] = useState<string>("");
 
-export default function Step3() {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!internshipType || !committedHours || !preferredIndustries || !interestedRoles) {
+      alert("Please complete all fields");
+      return;
+    }
+
+    try {
+      const response = await axios.post("/api/student/preferences", {
+        userId,
+        internshipType,
+        committedHours,
+        preferredIndustries: preferredIndustries.split(",").map((i) => i.trim()), // Convert to array
+        interestedRoles: interestedRoles.split(",").map((r) => r.trim()), // Convert to array
+      });
+
+      if (response.status === 200) {
+        onNext({ internshipType, committedHours, preferredIndustries, interestedRoles }); // ✅ Proceed to next step
+      }
+    } catch (error) {
+      alert("Error saving job preferences");
+    }
+  };
+
   return (
-    <div className="w-[500px] mx-auto ">
+    <div className="w-[500px] mx-auto">
       <h2 className="text-2xl font-semibold mb-6 text-center">Job Preferences</h2>
 
-      <form>
+      <form onSubmit={handleSubmit}>
         {/* Internship Type */}
         <div className="mb-4">
           <Label htmlFor="internshipType" className="block mb-2">
-            What type of internship are you looking for?
+            What type of internship would you prefer?
           </Label>
-          <Select>
+          <Select onValueChange={(value) => setInternshipType(value)}>
             <SelectTrigger id="internshipType" className="w-full">
               <SelectValue placeholder="Select..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Short Term (<2 Monthts)">Short Term</SelectItem>
-              <SelectItem value="Long Term (2 Monthts +)">Long Term</SelectItem>
+              <SelectItem value="Short Term">Short Term</SelectItem>
+              <SelectItem value="Long Term">Long Term</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -31,9 +61,9 @@ export default function Step3() {
         {/* Committed Hours */}
         <div className="mb-4">
           <Label htmlFor="committedHours" className="block mb-2">
-          How many hours per week can you commit?
+            How many hours per week can you commit?
           </Label>
-          <Select>
+          <Select onValueChange={(value) => setCommittedHours(value)}>
             <SelectTrigger id="committedHours" className="w-full">
               <SelectValue placeholder="Select..." />
             </SelectTrigger>
@@ -46,65 +76,37 @@ export default function Step3() {
           </Select>
         </div>
 
-        {/* Internship Pref */}
-        <div className="mb-4">
-          <Label htmlFor="internshipPref" className="block mb-2">
-          How many hours per week can you commit?
-          </Label>
-          <Select>
-            <SelectTrigger id="internshipPref" className="w-full">
-              <SelectValue placeholder="Select..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Paid">Paid</SelectItem>
-              <SelectItem value="Unpaid">Unpaid</SelectItem>
-              <SelectItem value="No Prefernces">No Prefernces</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
         {/* Preferred Industry */}
         <div className="mb-4">
           <Label htmlFor="preferredIndustry" className="block mb-2">
-          What are your preferred industries?
+            What are your preferred industries?
           </Label>
           <Input
             id="preferredIndustry"
             placeholder="e.g. Fintech, Automotive, Healthcare, AI, SaaS"
             className="w-full"
+            value={preferredIndustries}
+            onChange={(e) => setPreferredIndustries(e.target.value)}
           />
         </div>
 
         {/* Roles */}
         <div className="mb-4">
           <Label htmlFor="interestedRoles" className="block mb-2">
-          What are your preferred industries?
+            What type of role are you interested in?
           </Label>
           <Input
             id="interestedRoles"
-            placeholder="e.g. UI/UX Designer, Software Engenieer, Marketer"
+            placeholder="e.g. UI/UX Designer, Software Engineer, Marketer"
             className="w-full"
+            value={interestedRoles}
+            onChange={(e) => setInterestedRoles(e.target.value)}
           />
         </div>
 
-        {/* Equity Based */}
-        <div className="mb-4">
-          <Label htmlFor="equityBased" className="block mb-2">
-          Would you be open to equity-based compensation in a startup?
-          </Label>
-          <Select>
-            <SelectTrigger id="equityBased" className="w-full">
-              <SelectValue placeholder="Select..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Yes">Yes</SelectItem>
-              <SelectItem value="No">No</SelectItem>
-              <SelectItem value="Don't Mind">Don't Mind</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        
+        <Button type="submit" className="w-full">
+          Save & Continue
+        </Button>
       </form>
     </div>
   );

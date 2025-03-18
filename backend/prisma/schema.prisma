@@ -8,23 +8,56 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  name     String
-  email    String  @unique
-  password String
-  role     Role    @default(USER)
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(STUDENT) // ✅ Corrected default value
   createdAt DateTime @default(now())
+
+  internships Internship[] // ✅ Connects startups to internships
+
+  StudentProfile StudentProfile[]
 }
 
 model Internship {
-  id          String  @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   description String
   startupId   String
   createdAt   DateTime @default(now())
+
+  startup     User @relation(fields: [startupId], references: [id]) // ✅ Connects to User
 }
 
+model StudentProfile {
+  id                   String   @id @default(uuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id])
+  yearOfStudy          Int
+  degree               String
+  skills               String[]
+  tools                String[]
+  priorExperience      Boolean
+  learningNewSkills    Boolean
+  internshipType       String
+  committedHours       String
+  preferredIndustries  String[]
+  interestedRoles      String[]
+  workPreference       String
+  softSkill            String
+  softSkillDescription String
+  location             String   // User's location
+  startDate            String   // When they can start
+}
+
+
+
+
+
+
+
 enum Role {
-  USER
+  STUDENT
   STARTUP
 }

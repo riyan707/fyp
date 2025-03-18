@@ -1,11 +1,8 @@
 "use client";
-import React, { useState, FormEvent } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/src/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
-import { PlacementCard, Placement } from "../ui/PlacementCard"; // Adjust import path
-import { useRouter } from "next/navigation"; // For closing the drawer if controlled via routing
+import { PlacementCard, Placement } from "../ui/PlacementCard";
 
 // Simulated placement suggestions
 const placementSuggestions: Placement[] = [
@@ -41,75 +38,31 @@ const placementSuggestions: Placement[] = [
   },
 ];
 
-export default function Step6({ closeDrawer }: { closeDrawer: () => void }) {
-  const [password, setPassword] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+export default function Step6() {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [placements, setPlacements] = useState<Placement[] | null>(null);
-  const router = useRouter(); // For closing drawer via routing
 
-  const handlePasswordSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // Begin loading
-    setIsLoading(true);
-
-    // Simulate a delay for the algorithm search
+  useEffect(() => {
+    // Simulate a loading delay before showing placements
     setTimeout(() => {
       setPlacements(placementSuggestions);
       setIsLoading(false);
     }, 2000);
-  };
+  }, []);
 
   const handleApply = () => {
     const confirmed = window.confirm("Are you sure you want to apply for this placement?");
     if (confirmed) {
       alert("Application submitted successfully!");
-      closeDrawer(); // Call function to close the drawer
     }
   };
 
   return (
     <div className="w-full mx-auto">
-      {!placements && (
-        <form onSubmit={handlePasswordSubmit} className="flex flex-col items-center space-y-4">
-          <h2 className="text-2xl font-semibold mb-6 text-center">Create your Password</h2>
-
-          <div className="mb-4 w-full">
-            <Label htmlFor="password" className="block mb-2">
-              Your Password
-            </Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="•••••••••••"
-              className="w-full"
-            />
-          </div>
-
-          <div className="mb-4 w-full">
-            <Label htmlFor="rePassword" className="block mb-2">
-              Re-enter password
-            </Label>
-            <Input
-              id="rePassword"
-              type="password"
-              placeholder="•••••••••••"
-              className="w-full"
-            />
-          </div>
-
-          <Button type="submit" disabled={isLoading || !password} className="w-full">
-            {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : "Submit"}
-          </Button>
-        </form>
-      )}
-
       {isLoading && (
-        <div className="flex flex-col items-center mt-4">
-          <Loader2 className="animate-spin w-6 h-6" />
-          <p className="mt-2">Searching for the best placement...</p>
+        <div className="flex flex-col items-center mt-20">
+          <Loader2 className="animate-spin w-10 h-10 text-gray-600" />
+          <p className="mt-4 text-lg text-gray-700">Finding the best placements for you...</p>
         </div>
       )}
 
@@ -137,7 +90,7 @@ export default function Step6({ closeDrawer }: { closeDrawer: () => void }) {
           </div>
 
           <div className="text-center mt-6">
-            <p className="text-gray-600">Didn&apos;t find what you were looking for?</p>
+            <p className="text-gray-600">Didn't find what you were looking for?</p>
             <button className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
               Discover More
             </button>

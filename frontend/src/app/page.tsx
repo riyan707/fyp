@@ -1,10 +1,10 @@
-import Navbar from "./components/navbar";
+
+import Signup from "./components/signup";
 
 const HomePage = () => {
   return (
-    <div>
-      <Navbar/>
-
+    <div >
+      <Signup/>
     </div>
   );
 };
