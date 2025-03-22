@@ -7,6 +7,8 @@ import jwt from "jsonwebtoken";
 import { authenticateUser } from "./middleware/authMiddleware.js";
 
 
+
+
 // Load environment variables
 dotenv.config();
 
@@ -21,6 +23,147 @@ const prisma = new PrismaClient({
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Add Student Experience Route
+app.post("/api/student/experience", authenticateUser, async (req, res) => {
+  try {
+    const { skills, tools, priorExperience, learningNewSkills } = req.body;
+
+    if (!skills || !tools || priorExperience === null || learningNewSkills === null) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Update Student Profile
+    const studentProfile = await prisma.studentProfile.update({
+      where: { userId: req.user.id },
+      data: { skills, tools, priorExperience, learningNewSkills },
+    });
+
+    res.status(200).json({
+      message: "Experience saved successfully",
+      studentProfile,
+    });
+  } catch (error) {
+    console.error("🔥 Student Experience Error:", error);
+    res.status(500).json({ message: "Error saving experience", error: error.message });
+  }
+});
+
+// Add Student Location & Availability Route
+app.post("/api/student/location", authenticateUser, async (req, res) => {
+  try {
+    const { location, startDate } = req.body;
+
+    if (!location || !startDate) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Update Student Profile with location & availability
+    const studentProfile = await prisma.studentProfile.update({
+      where: { userId: req.user.id },
+      data: {
+        location,
+        startDate,
+      },
+    });
+
+    res.status(200).json({
+      message: "Location & availability saved successfully",
+      studentProfile,
+    });
+  } catch (error) {
+    console.error("🔥 Student Location Error:", error);
+    res.status(500).json({ message: "Error saving location & availability", error: error.message });
+  }
+});
+
+
+// Add Student Personality Route
+app.post("/api/student/personality", authenticateUser, async (req, res) => {
+  try {
+    const { workPreference, softSkill, softSkillDescription } = req.body;
+
+    if (!workPreference || !softSkill || !softSkillDescription) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Update Student Profile
+    const studentProfile = await prisma.studentProfile.update({
+      where: { userId: req.user.id },
+      data: {
+        workPreference,
+        softSkill,
+        softSkillDescription,
+      },
+    });
+
+    res.status(200).json({
+      message: "Work style & personality saved successfully",
+      studentProfile,
+    });
+  } catch (error) {
+    console.error("🔥 Student Personality Error:", error);
+    res.status(500).json({ message: "Error saving work style & personality", error: error.message });
+  }
+});
+
+
+// Add Student Preferences Route
+app.post("/api/student/preferences", authenticateUser, async (req, res) => {
+  try {
+    const { internshipType, committedHours, preferredIndustries, interestedRoles } = req.body;
+
+    if (!internshipType || !committedHours || !preferredIndustries || !interestedRoles) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Update Student Profile
+    const studentProfile = await prisma.studentProfile.update({
+      where: { userId: req.user.id },
+      data: {
+        internshipType,
+        committedHours,
+        preferredIndustries,
+        interestedRoles,
+      },
+    });
+
+    res.status(200).json({
+      message: "Job preferences saved successfully",
+      studentProfile,
+    });
+  } catch (error) {
+    console.error("🔥 Student Preferences Error:", error);
+    res.status(500).json({ message: "Error saving job preferences", error: error.message });
+  }
+});
+
+
+// Add Student Profile Route
+app.post("/api/student/profile", authenticateUser, async (req, res) => {
+  try {
+    const { yearOfStudy, degree } = req.body;
+
+    if (!yearOfStudy || !degree) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Ensure `userId` from token is used
+    const studentProfile = await prisma.studentProfile.upsert({
+      where: { userId: req.user.id }, // req.user is set by `authenticateUser`
+      update: { yearOfStudy, degree },
+      create: { userId: req.user.id, yearOfStudy, degree },
+    });
+
+    res.status(200).json({
+      message: "Profile saved successfully",
+      studentProfile,
+    });
+  } catch (error) {
+    console.error("🔥 Student Profile Error:", error);
+    res.status(500).json({ message: "Error saving profile", error: error.message });
+  }
+});
 
 // Signup Route
 app.post("/api/auth/signup", async (req, res) => {

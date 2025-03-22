@@ -14,28 +14,49 @@ export default function Step3({ onNext, userId }: { onNext: (data: any) => void;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!internshipType || !committedHours || !preferredIndustries || !interestedRoles) {
-      alert("Please complete all fields");
+  
+    console.log("📤 Submitting values:", { internshipType, committedHours, preferredIndustries, interestedRoles });
+  
+    if (!internshipType || !committedHours || !preferredIndustries.trim() || !interestedRoles.trim()) {
+      alert("Please complete all fields properly.");
       return;
     }
-
+  
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("User not logged in! Please sign in first.");
+      return;
+    }
+  
     try {
-      const response = await axios.post("/api/student/preferences", {
-        userId,
-        internshipType,
-        committedHours,
-        preferredIndustries: preferredIndustries.split(",").map((i) => i.trim()), // Convert to array
-        interestedRoles: interestedRoles.split(",").map((r) => r.trim()), // Convert to array
-      });
-
+      const response = await axios.post(
+        "http://localhost:5000/api/student/preferences", // ✅ Correct API route
+        {
+          internshipType,
+          committedHours,
+          preferredIndustries: preferredIndustries.split(",").map((i) => i.trim()), // ✅ Convert to array
+          interestedRoles: interestedRoles.split(",").map((r) => r.trim()), // ✅ Convert to array
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
       if (response.status === 200) {
-        onNext({ internshipType, committedHours, preferredIndustries, interestedRoles }); // ✅ Proceed to next step
+        console.log("✅ Job preferences saved:", response.data);
+        onNext({ internshipType, committedHours, preferredIndustries, interestedRoles });
+      } else {
+        alert("Unexpected response from server.");
       }
-    } catch (error) {
-      alert("Error saving job preferences");
+    } catch (error: any) {
+      console.error("🔥 Error saving job preferences:", error.response?.data || error);
+      alert(error.response?.data?.message || "Error saving job preferences");
     }
   };
+  
 
   return (
     <div className="w-[500px] mx-auto">

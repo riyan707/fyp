@@ -14,27 +14,48 @@ export default function Step4({ onNext, userId }: { onNext: (data: any) => void;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!workPreference || !softSkill || !softSkillDescription) {
-      alert("Please complete all fields");
+  
+    console.log("📤 Submitting values:", { workPreference, softSkill, softSkillDescription });
+  
+    if (!workPreference || !softSkill.trim() || !softSkillDescription.trim()) {
+      alert("Please complete all fields properly.");
       return;
     }
-
+  
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("User not logged in! Please sign in first.");
+      return;
+    }
+  
     try {
-      const response = await axios.post("/api/student/personality", {
-        userId,
-        workPreference,
-        softSkill,
-        softSkillDescription,
-      });
-
+      const response = await axios.post(
+        "http://localhost:5000/api/student/personality", // ✅ Correct API route
+        {
+          workPreference,
+          softSkill,
+          softSkillDescription,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
       if (response.status === 200) {
-        onNext({ workPreference, softSkill, softSkillDescription }); // ✅ Proceed to next step
+        console.log("✅ Work style & personality saved:", response.data);
+        onNext({ workPreference, softSkill, softSkillDescription });
+      } else {
+        alert("Unexpected response from server.");
       }
-    } catch (error) {
-      alert("Error saving work style and personality");
+    } catch (error: any) {
+      console.error("🔥 Error saving work style & personality:", error.response?.data || error);
+      alert(error.response?.data?.message || "Error saving work style & personality");
     }
   };
+  
 
   return (
     <div className="w-[500px] mx-auto">

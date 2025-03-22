@@ -12,37 +12,45 @@ export default function Step1({ onNext }: { onNext: (data: any) => void }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     if (!yearOfStudy || !degree) {
       alert("Please complete all fields");
       return;
     }
-  
-    const token = localStorage.getItem("token"); // ✅ Retrieve token from localStorage
-  
+
+    const token = localStorage.getItem("token");
     if (!token) {
       alert("User not logged in! Please sign in first.");
       return;
     }
-  
+
     try {
-      const response = await axios.post("/api/student/profile", {
-        yearOfStudy,
-        degree,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`, // ✅ Send JWT Token in Headers
+      // ✅ Send only Year of Study & Degree
+      const response = await axios.post(
+        "http://localhost:5000/api/student/profile",
+        {
+          yearOfStudy,
+          degree,
         },
-      });
-  
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       if (response.status === 200) {
+        console.log("✅ Profile saved:", response.data);
         onNext({ yearOfStudy, degree });
+      } else {
+        alert("Unexpected response from server.");
       }
-    } catch (error) {
-      alert("Error saving profile");
+    } catch (error: any) {
+      console.error("🔥 Error saving profile:", error.response?.data || error);
+      alert(error.response?.data?.message || "Error saving profile");
     }
   };
-  
 
   return (
     <div className="w-[500px] mx-auto">

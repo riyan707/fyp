@@ -17,7 +17,7 @@ model User {
 
   internships Internship[] // ✅ Connects startups to internships
 
-  StudentProfile StudentProfile[]
+  StudentProfile StudentProfile?
 }
 
 model Internship {
@@ -34,22 +34,25 @@ model StudentProfile {
   id                   String   @id @default(uuid())
   userId               String   @unique
   user                 User     @relation(fields: [userId], references: [id])
-  yearOfStudy          Int
-  degree               String
-  skills               String[]
-  tools                String[]
-  priorExperience      Boolean
-  learningNewSkills    Boolean
-  internshipType       String
-  committedHours       String
-  preferredIndustries  String[]
-  interestedRoles      String[]
-  workPreference       String
-  softSkill            String
-  softSkillDescription String
-  location             String   // User's location
-  startDate            String   // When they can start
+  yearOfStudy          Int      @default(1) // ✅ Default to Year 1
+  degree               String   @default("Undeclared") // ✅ Default degree
+  skills               String[] @default([]) // ✅ Default empty array
+  tools                String[] @default([]) // ✅ Default empty array
+  priorExperience      Boolean  @default(false) // ✅ Default false
+  learningNewSkills    Boolean  @default(false) // ✅ Default false
+  internshipType       String   @default("None") // ✅ Default internship type
+  committedHours       String   @default("0 hours") // ✅ Default hours
+  preferredIndustries  String[] @default([]) // ✅ Default empty array
+  interestedRoles      String[] @default([]) // ✅ Default empty array
+  workPreference       String   @default("None") // ✅ Default work preference
+  softSkill            String   @default("None") // ✅ Default soft skill
+  softSkillDescription String   @default("No description") // ✅ Default description
+  location             String   @default("Unknown") // ✅ Default location
+  startDate            String   @default("2025-01-01") // ✅ Default start date
 }
+
+
+
 
 
 

@@ -6,7 +6,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Button } from "@/src/components/ui/button";
 import axios from "axios";
 
-export default function Step2({ onNext, userId }: { onNext: (data: any) => void; userId: string }) {
+export default function Step2({ onNext }: { onNext: (data: any) => void }) {
   const [skills, setSkills] = useState<string>("");
   const [tools, setTools] = useState<string>("");
   const [priorExperience, setPriorExperience] = useState<boolean | null>(null);
@@ -14,28 +14,49 @@ export default function Step2({ onNext, userId }: { onNext: (data: any) => void;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!skills || !tools || priorExperience === null || learningNewSkills === null) {
-      alert("Please complete all fields");
+  
+    console.log("📤 Submitting values:", { skills, tools, priorExperience, learningNewSkills });
+  
+    if (!skills.trim() || !tools.trim() || priorExperience === null || learningNewSkills === null) {
+      alert("Please complete all fields properly.");
       return;
     }
-
+  
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("User not logged in! Please sign in first.");
+      return;
+    }
+  
     try {
-      const response = await axios.post("/api/student/experience", {
-        userId,
-        skills: skills.split(",").map((s) => s.trim()), // Convert comma-separated string to array
-        tools: tools.split(",").map((t) => t.trim()), // Convert comma-separated string to array
-        priorExperience,
-        learningNewSkills,
-      });
-
+      const response = await axios.post(
+        "http://localhost:5000/api/student/experience", // ✅ Correct API route
+        {
+          skills: skills.split(",").map((s) => s.trim()), // ✅ Convert to array
+          tools: tools.split(",").map((t) => t.trim()),   // ✅ Convert to array
+          priorExperience,
+          learningNewSkills,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
       if (response.status === 200) {
-        onNext({ skills, tools, priorExperience, learningNewSkills }); // ✅ Proceed to next step
+        console.log("✅ Experience saved:", response.data);
+        onNext({ skills, tools, priorExperience, learningNewSkills });
+      } else {
+        alert("Unexpected response from server.");
       }
-    } catch (error) {
-      alert("Error saving experience");
+    } catch (error: any) {
+      console.error("🔥 Error saving experience:", error.response?.data || error);
+      alert(error.response?.data?.message || "Error saving experience");
     }
   };
+  
 
   return (
     <div className="w-[500px] mx-auto">
@@ -75,13 +96,13 @@ export default function Step2({ onNext, userId }: { onNext: (data: any) => void;
           <Label htmlFor="priorExperience" className="block mb-2">
             Do you have prior internship or work experience?
           </Label>
-          <Select onValueChange={(value) => setPriorExperience(value === "1")}>
+          <Select onValueChange={(value) => setPriorExperience(value === "yes")}>
             <SelectTrigger id="priorExperience" className="w-full">
               <SelectValue placeholder="Select..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1">Yes</SelectItem>
-              <SelectItem value="2">No</SelectItem>
+              <SelectItem value="yes">Yes</SelectItem>
+              <SelectItem value="no">No</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -91,13 +112,13 @@ export default function Step2({ onNext, userId }: { onNext: (data: any) => void;
           <Label htmlFor="newSkills" className="block mb-2">
             Are you open to learning new skills on the job?
           </Label>
-          <Select onValueChange={(value) => setLearningNewSkills(value === "1")}>
+          <Select onValueChange={(value) => setLearningNewSkills(value === "yes")}>
             <SelectTrigger id="newSkills" className="w-full">
               <SelectValue placeholder="Select..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1">Yes</SelectItem>
-              <SelectItem value="2">No</SelectItem>
+              <SelectItem value="yes">Yes</SelectItem>
+              <SelectItem value="no">No</SelectItem>
             </SelectContent>
           </Select>
         </div>

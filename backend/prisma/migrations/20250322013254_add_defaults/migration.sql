@@ -1,0 +1,16 @@
+-- AlterTable
+ALTER TABLE "StudentProfile" ALTER COLUMN "yearOfStudy" SET DEFAULT 1,
+ALTER COLUMN "degree" SET DEFAULT 'Undeclared',
+ALTER COLUMN "learningNewSkills" SET DEFAULT false,
+ALTER COLUMN "priorExperience" SET DEFAULT false,
+ALTER COLUMN "skills" SET DEFAULT ARRAY[]::TEXT[],
+ALTER COLUMN "tools" SET DEFAULT ARRAY[]::TEXT[],
+ALTER COLUMN "committedHours" SET DEFAULT '0 hours',
+ALTER COLUMN "interestedRoles" SET DEFAULT ARRAY[]::TEXT[],
+ALTER COLUMN "internshipType" SET DEFAULT 'None',
+ALTER COLUMN "preferredIndustries" SET DEFAULT ARRAY[]::TEXT[],
+ALTER COLUMN "softSkill" SET DEFAULT 'None',
+ALTER COLUMN "softSkillDescription" SET DEFAULT 'No description',
+ALTER COLUMN "workPreference" SET DEFAULT 'None',
+ALTER COLUMN "location" SET DEFAULT 'Unknown',
+ALTER COLUMN "startDate" SET DEFAULT '2025-01-01';

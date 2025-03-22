@@ -11,26 +11,47 @@ export default function Step5({ onNext, userId }: { onNext: (data: any) => void;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!location || !startDate) {
-      alert("Please complete all fields");
+  
+    console.log("📤 Submitting values:", { location, startDate });
+  
+    if (!location.trim() || !startDate.trim()) {
+      alert("Please complete all fields properly.");
       return;
     }
-
+  
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("User not logged in! Please sign in first.");
+      return;
+    }
+  
     try {
-      const response = await axios.post("/api/student/location", {
-        userId,
-        location,
-        startDate,
-      });
-
+      const response = await axios.post(
+        "http://localhost:5000/api/student/location", // ✅ Correct API route
+        {
+          location,
+          startDate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
       if (response.status === 200) {
-        onNext({ location, startDate }); // ✅ Proceed to next step
+        console.log("✅ Location & availability saved:", response.data);
+        onNext({ location, startDate });
+      } else {
+        alert("Unexpected response from server.");
       }
-    } catch (error) {
-      alert("Error saving location and availability");
+    } catch (error: any) {
+      console.error("🔥 Error saving location & availability:", error.response?.data || error);
+      alert(error.response?.data?.message || "Error saving location & availability");
     }
   };
+  
 
   return (
     <div className="w-[500px] mx-auto">
