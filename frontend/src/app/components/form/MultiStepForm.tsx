@@ -30,7 +30,7 @@ export default function MultiStepForm({ closeDrawer }: { closeDrawer: () => void
     "Preferences",
     "Work Style",
     "Location of Availability",
-    "Find a Placement",
+
   ];
 
   const handleNext = async (stepData: any) => {
@@ -62,7 +62,6 @@ export default function MultiStepForm({ closeDrawer }: { closeDrawer: () => void
           {currentStep === 3 && <Step3 onNext={handleNext} userId={""}/>}
           {currentStep === 4 && <Step4 onNext={handleNext} userId={""}/>}
           {currentStep === 5 && <Step5 onNext={handleNext} userId={""}/>}
-          {currentStep === 6 && <Step6 />}
         </div>
 
         {/* Navigation Buttons */}

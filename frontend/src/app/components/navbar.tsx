@@ -1,121 +1,91 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+"use client";
+import { Bell, UserCircle } from "lucide-react";
+import { Button } from "@/src/components/ui/button";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
-import { Laptop, BezierCurve, BriefcaseMetal, GraduationCap, Buildings } from "@phosphor-icons/react";
 
-export default function Signup() {
-  const [role, setRole] = useState("student");
-  const [formData, setFormData] = useState({ fullName: "", email: "", password: "" });
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+export default function Navbar() {
+  const [role, setRole] = useState<string | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const router = useRouter();
 
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  useEffect(() => {
+    const fetchRole = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
-
-    try {
-      const response = await axios.post("/api/auth/signup", { ...formData, role });
-      if (response.status === 201) {
-        if (role === "student") {
-          navigate("/multistepform");
-        } else {
-          navigate("/startup-dashboard");
-        }
+      try {
+        const response = await axios.get("http://localhost:5000/api/user/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setRole(response.data.role);
+      } catch (err) {
+        console.error("🔥 Error fetching user role:", err);
       }
-    } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong. Please try again.");
-    }
+    };
+
+    fetchRole();
+  }, []);
+
+  const handleEditProfile = () => {
+    if (role === "STUDENT") router.push("/edit-student-profile");
+    else if (role === "STARTUP") router.push("/edit-startup-profile");
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
-      <div className="flex w-full max-w-4xl rounded-lg bg-white shadow-lg">
-        {/* Left Section */}
-        <div className="flex w-1/2 flex-col items-center justify-center p-8">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">
-            Get one step closer to achieving your career goals!
-          </h2>
-          <div className="mt-4 flex gap-6 text-green-900">
-            <Laptop size={32} />
-            <BezierCurve size={32} />
-            <BriefcaseMetal size={32} />
-          </div>
-        </div>
+    <nav className="flex items-center justify-between px-6 py-4 border-b bg-gray-50 relative">
+      {/* Left: Logo */}
+      <Link href="/" className="text-xl font-bold text-green-900">
+        TalentLink
+      </Link>
 
-        {/* Right Section */}
-        <div className="w-1/2 rounded-r-lg bg-white p-8 shadow-md">
-          <h2 className="mb-4 text-2xl font-bold text-green-900">TalentLink</h2>
-          <p className="mb-2 text-gray-600">
-            Have an account? <a href="#" className="text-blue-600">Sign In</a>
-          </p>
-          <div className="flex gap-4">
-            <button
-              className={`flex items-center gap-2 rounded-lg border p-2 px-4 text-sm font-medium ${
-                role === "student" ? "border-green-900 text-green-900" : "border-gray-300 text-gray-500"
-              }`}
-              onClick={() => setRole("student")}
-            >
-              <GraduationCap size={18} /> Student
-            </button>
-            <button
-              className={`flex items-center gap-2 rounded-lg border p-2 px-4 text-sm font-medium ${
-                role === "startup" ? "border-green-900 text-green-900" : "border-gray-300 text-gray-500"
-              }`}
-              onClick={() => setRole("startup")}
-            >
-              <Buildings size={18} /> Startup
-            </button>
-          </div>
-
-          {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
-
-          <form className="mt-4" onSubmit={handleSubmit}>
-            <label className="block text-sm font-medium text-gray-700">Full name / Business name</label>
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleInputChange}
-              placeholder="Jane Smith"
-              className="mt-1 w-full rounded-md border p-2 outline-none focus:border-green-700"
-              required
-            />
-
-            <label className="mt-3 block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="jane@framer.com"
-              className="mt-1 w-full rounded-md border p-2 outline-none focus:border-green-700"
-              required
-            />
-
-            <label className="mt-3 block text-sm font-medium text-gray-700">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              placeholder="••••••••"
-              className="mt-1 w-full rounded-md border p-2 outline-none focus:border-green-700"
-              required
-            />
-
-            <button
-              type="submit"
-              className="mt-4 w-full rounded-md bg-black p-2 text-white hover:bg-gray-800"
-            >
-              Create an Account
-            </button>
-          </form>
-        </div>
+      {/* Center: Navigation Links */}
+      <div className="hidden md:flex gap-6 text-gray-700">
+        <Link href="/discover" className="hover:text-green-900">Discover</Link>
+        <Link href="/messages" className="hover:text-green-900">Messages</Link>
       </div>
-    </div>
+
+      {/* Right: Icons and Button */}
+      <div className="flex items-center gap-4 relative">
+        <Bell className="w-6 h-6 text-green-900 cursor-pointer" />
+
+        {/* Profile Dropdown */}
+        <div className="relative">
+          <UserCircle
+            className="w-8 h-8 text-green-900 cursor-pointer"
+            onClick={() => setDropdownOpen((prev) => !prev)}
+          />
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-50">
+              <button
+                onClick={handleEditProfile}
+                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                Edit Profile
+              </button>
+              <button
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  router.push("/");
+                }}
+                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Divider */}
+        <div className="hidden md:block h-6 w-px bg-gray-400" />
+
+        {/* CTA Button */}
+        <Button variant="outline" className="border-green-900 text-green-900 hidden md:flex">
+          Find your next placement
+        </Button>
+      </div>
+    </nav>
   );
 }

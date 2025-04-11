@@ -39,11 +39,10 @@ const placementSuggestions: Placement[] = [
 ];
 
 export default function Step6() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [placements, setPlacements] = useState<Placement[] | null>(null);
 
   useEffect(() => {
-    // Simulate a loading delay before showing placements
     setTimeout(() => {
       setPlacements(placementSuggestions);
       setIsLoading(false);
@@ -51,27 +50,28 @@ export default function Step6() {
   }, []);
 
   const handleApply = () => {
-    const confirmed = window.confirm("Are you sure you want to apply for this placement?");
+    const confirmed = window.confirm("Are you sure you want to apply to all recommended placements?");
     if (confirmed) {
-      alert("Application submitted successfully!");
+      alert("🎉 Application submitted to all placements successfully!");
     }
   };
 
   return (
-    <div className="w-full mx-auto">
+    <div className="w-full mx-auto px-4 md:px-0">
       {isLoading && (
-        <div className="flex flex-col items-center mt-20">
+        <div className="flex flex-col items-center justify-center mt-20">
           <Loader2 className="animate-spin w-10 h-10 text-gray-600" />
           <p className="mt-4 text-lg text-gray-700">Finding the best placements for you...</p>
         </div>
       )}
 
       {placements && (
-        <div className="mt-8">
-          <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">
-            Recommended Placements
+        <div className="mt-8 max-w-3xl mx-auto">
+          <h2 className="text-3xl font-semibold text-center text-gray-800 mb-8">
+            🎯 Recommended Placements
           </h2>
-          <div className="grid grid-cols-1 gap-4">
+
+          <div className="grid grid-cols-1 gap-6">
             {placements.map((placement, index) => (
               <PlacementCard
                 key={index}
@@ -83,16 +83,20 @@ export default function Step6() {
           </div>
 
           {/* Apply Button */}
-          <div className="flex justify-center mt-6">
-            <Button onClick={handleApply} className="bg-green-600 hover:bg-green-700">
-              Apply for Suggested Placements
+          <div className="flex justify-center mt-10">
+            <Button
+              onClick={handleApply}
+              className="bg-green-600 hover:bg-green-700 px-6 py-2 rounded-full text-white text-md"
+            >
+              Apply to All
             </Button>
           </div>
 
-          <div className="text-center mt-6">
-            <p className="text-gray-600">Didn't find what you were looking for?</p>
-            <button className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
-              Discover More
+          {/* Discover More Section */}
+          <div className="text-center mt-10">
+            <p className="text-gray-600 text-sm">Still exploring options?</p>
+            <button className="mt-3 px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all">
+              Discover More Opportunities
             </button>
           </div>
         </div>

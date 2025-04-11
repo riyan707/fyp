@@ -1,11 +1,12 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Laptop, BezierCurve, Briefcase, GraduationCap, Building } from "@phosphor-icons/react";
 
 export default function AuthForm() {
-  const [isSignup, setIsSignup] = useState<boolean>(true); // ✅ Toggle between Sign Up & Login
+  const [isSignup, setIsSignup] = useState<boolean>(true);
   const [role, setRole] = useState<string>("STUDENT");
   const [formData, setFormData] = useState<{ name?: string; email: string; password: string }>({
     name: "",
@@ -22,33 +23,50 @@ export default function AuthForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-
+  
+    const payload: any = {
+      email: formData.email,
+      password: formData.password,
+      role,
+    };
+  
+    if (isSignup) {
+      if (!formData.name) {
+        setError(role === "STARTUP" ? "Company name is required." : "Full name is required.");
+        return;
+      }
+    
+      if (role === "STARTUP") {
+        payload.companyName = formData.name; 
+      } else {
+        payload.name = formData.name;
+      }
+    }
+    
+  
     try {
       if (isSignup) {
-        // ✅ Signup request
-        const response = await axios.post("http://localhost:5000/api/auth/signup", {
-          ...formData,
-          role,
-        });
+        const response = await axios.post("http://localhost:5000/api/auth/signup", payload);
         if (response.status === 201) {
           localStorage.setItem("token", response.data.token);
-          router.push("/multistepform");
+          router.push(role === "STARTUP" ? "/internship-form" : "/student-profile");
         }
       } else {
-        // ✅ Login request
         const response = await axios.post("http://localhost:5000/api/auth/login", {
           email: formData.email,
           password: formData.password,
         });
+  
         if (response.status === 200) {
           localStorage.setItem("token", response.data.token);
-          router.push("/multistepform"); // Redirect after login
+          router.push(response.data.role === "STARTUP" ? "/startup-profile" : "/student-profile");
         }
       }
     } catch (err: any) {
       setError(err.response?.data?.message || "Something went wrong. Please try again.");
     }
   };
+  
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
@@ -108,7 +126,7 @@ export default function AuthForm() {
                 <input
                   type="text"
                   name="name"
-                  placeholder="Jane Smith"
+                  placeholder={role === "STARTUP" ? "Startup Name" : "Full Name"}
                   onChange={handleInputChange}
                   className="mt-1 w-full rounded-md border p-2 outline-none focus:border-green-700"
                   required

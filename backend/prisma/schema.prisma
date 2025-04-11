@@ -9,55 +9,67 @@ datasource db {
 
 model User {
   id        String   @id @default(uuid())
-  name      String
   email     String   @unique
   password  String
-  role      Role     @default(STUDENT) // ✅ Corrected default value
+  role      Role
+  name      String?  
   createdAt DateTime @default(now())
 
-  internships Internship[] // ✅ Connects startups to internships
+  StudentProfile Student?  
+  StartupProfile Startup?  
+}
 
-  StudentProfile StudentProfile?
+model Student {
+  id                   String   @id @default(uuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  yearOfStudy          Int      @default(1)
+  degree               String   @default("Undeclared")
+  skills               String[] @default([])
+  tools                String[] @default([])
+  priorExperience      Boolean  @default(false)
+  learningNewSkills    Boolean  @default(false)
+  preferredIndustries  String[] @default([])
+  interestedRoles      String[] @default([])
+  committedHours       String   @default("0")
+  internshipType       String? 
+  workPreference       String   @default("None")
+  softSkill            String? 
+  softSkillDescription String?
+  location             String   @default("Unknown")
+  startDate            DateTime @default(now())
+}
+
+
+model Startup {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyName  String   
+  website      String?
+  foundedYear  Int
+  internships  Internship[]
 }
 
 model Internship {
-  id          String   @id @default(uuid())
-  title       String
-  description String
-  startupId   String
-  createdAt   DateTime @default(now())
+  id                String   @id @default(uuid())
+  title             String
+  description       String
+  internshipType    String
+  duration          String
+  workPreference    String
+  skillsRequired    String
+  preferredIndustry String
+  location          String
+  startDate         DateTime
+  salary            String?   
+  company           String?   
+  startupId         String
+  createdAt         DateTime @default(now())
+  toolsRequired     String? 
 
-  startup     User @relation(fields: [startupId], references: [id]) // ✅ Connects to User
+  startup           Startup  @relation(fields: [startupId], references: [id], onDelete: Cascade)
 }
-
-model StudentProfile {
-  id                   String   @id @default(uuid())
-  userId               String   @unique
-  user                 User     @relation(fields: [userId], references: [id])
-  yearOfStudy          Int      @default(1) // ✅ Default to Year 1
-  degree               String   @default("Undeclared") // ✅ Default degree
-  skills               String[] @default([]) // ✅ Default empty array
-  tools                String[] @default([]) // ✅ Default empty array
-  priorExperience      Boolean  @default(false) // ✅ Default false
-  learningNewSkills    Boolean  @default(false) // ✅ Default false
-  internshipType       String   @default("None") // ✅ Default internship type
-  committedHours       String   @default("0 hours") // ✅ Default hours
-  preferredIndustries  String[] @default([]) // ✅ Default empty array
-  interestedRoles      String[] @default([]) // ✅ Default empty array
-  workPreference       String   @default("None") // ✅ Default work preference
-  softSkill            String   @default("None") // ✅ Default soft skill
-  softSkillDescription String   @default("No description") // ✅ Default description
-  location             String   @default("Unknown") // ✅ Default location
-  startDate            String   @default("2025-01-01") // ✅ Default start date
-}
-
-
-
-
-
-
-
-
 
 
 enum Role {
